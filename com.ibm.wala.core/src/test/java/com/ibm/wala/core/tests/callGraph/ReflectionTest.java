@@ -710,7 +710,7 @@ public class ReflectionTest extends WalaTestCase {
         Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha,
                 TestConstants.REFLECT25_MAIN);
         AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
-        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, false);
+        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, true);
         TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/Helper");
         MethodReference mr = MethodReference.findOrCreate(tr, "o", "(Ljava/lang/Object;Ljava/lang/Object;)V");
         Set<CGNode> nodes = cg.getNodes(mr);
@@ -729,8 +729,8 @@ public class ReflectionTest extends WalaTestCase {
         Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha,
                 TestConstants.REFLECT26_MAIN);
         AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
-        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, false);
-        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/GFG");
+        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, true);
+        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/Reflect26$Marvel");
         MethodReference mr = MethodReference.findOrCreate(tr, "getCustomAnnotation", "()V");
         Set<CGNode> nodes = cg.getNodes(mr);
         Assert.assertFalse(nodes.isEmpty());
@@ -748,9 +748,9 @@ public class ReflectionTest extends WalaTestCase {
         Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha,
                 TestConstants.REFLECT27_MAIN);
         AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
-        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, false);
-        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/Color");
-        MethodReference mr = MethodReference.findOrCreate(tr, "values", "([Lreflection/Color;)V");
+        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, true);
+        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/Reflect27$Color");
+        MethodReference mr = MethodReference.findOrCreate(tr, "values", "()[Lreflection/Reflect27$Color;");
         Set<CGNode> nodes = cg.getNodes(mr);
         Assert.assertFalse(nodes.isEmpty());
     }
@@ -767,14 +767,14 @@ public class ReflectionTest extends WalaTestCase {
         Iterable<Entrypoint> entrypoints = com.ibm.wala.ipa.callgraph.impl.Util.makeMainEntrypoints(scope, cha,
                 TestConstants.REFLECT28_MAIN);
         AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
-        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, false);
-        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/HelperImpl");
-        MethodReference mr = MethodReference.findOrCreate(tr, "display", "(Ljava/lang/String;)V");
+        CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, true);
+        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/HelperInterface");
+        MethodReference mr = MethodReference.findOrCreate(tr, "display", "()Ljava/lang/String;");
         Set<CGNode> nodes = cg.getNodes(mr);
         Assert.assertFalse(nodes.isEmpty());
 
-        TypeReference tr2 = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/HelperImplSecond");
-        MethodReference mr2 = MethodReference.findOrCreate(tr2, "display", "(Ljava/lang/String;)V");
+        TypeReference tr2 = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/HelperImpl");
+        MethodReference mr2 = MethodReference.findOrCreate(tr2, "display", "()Ljava/lang/String;");
         Set<CGNode> nodes2 = cg.getNodes(mr2);
         Assert.assertFalse(nodes2.isEmpty());
     }
