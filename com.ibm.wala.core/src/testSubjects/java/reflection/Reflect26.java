@@ -27,7 +27,7 @@ public class Reflect26 {
   }
 
   @Annotation(key = "AvengersLeader", value = "CaptainAmerica")
-  public class Marvel {
+  public static class Marvel {
     @Annotation(key = "AvengersPlayer", value = "Hulk")
     public void getCustomAnnotation()
     {
@@ -47,5 +47,6 @@ public class Reflect26 {
     Annotation anno = methods[0].getAnnotation(Annotation.class);
     System.out.println("Key Attribute of Method Annotation: " + anno.key());
     System.out.println("Value Attribute of Method Annotation: " + anno.value());
+
   }
 }

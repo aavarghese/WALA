@@ -154,6 +154,9 @@ public final class TypeReference implements Serializable {
   public static final TypeReference JavaLangClass =
       findOrCreate(ClassLoaderReference.Primordial, JavaLangClassName);
 
+  public static final TypeReference JavaLangClassApplication =
+      findOrCreate(ClassLoaderReference.Primordial, JavaLangClassName);
+
   private static final TypeName JavaLangInvokeMethodHandleName =
       TypeName.string2TypeName("Ljava/lang/invoke/MethodHandle");
 
