@@ -27,6 +27,9 @@ import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ipa.summaries.BypassSyntheticClassLoader;
 import com.ibm.wala.ipa.summaries.SyntheticIR;
 import com.ibm.wala.shrike.shrikeCT.AnnotationsReader;
+import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.ArrayElementValue;
+import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.ConstantElementValue;
+import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.ElementValue;
 import com.ibm.wala.ssa.ConstantValue;
 import com.ibm.wala.ssa.DefUse;
 import com.ibm.wala.ssa.IR;
@@ -161,7 +164,7 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
 
       Map<String, AnnotationsReader.ElementValue> annotMap = annot.getNamedArguments();
       for (String key : annotMap.keySet())  {
-        clAnnot.addField(Atom.findOrCreateUnicodeAtom(key), TypeReference.JavaLangString);  //TODO: Need a utility to extract the type from the ElementValue
+        clAnnot.addField(Atom.findOrCreateUnicodeAtom(key), getTRForElementValue(annotMap.get(key)));
       }
 
       int iindex = 0;
@@ -181,6 +184,23 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
     }
 
     return statements.toArray(new SSAInstruction[0]);
+  }
+
+  private TypeReference getTRForElementValue(AnnotationsReader.ElementValue val) {
+    if (val instanceof AnnotationsReader.ConstantElementValue) {
+      if (((AnnotationsReader.ConstantElementValue) val).val instanceof String) {
+        return TypeReference.JavaLangString;
+      } else if (((AnnotationsReader.ConstantElementValue) val).val instanceof Integer) {
+        return TypeReference.JavaLangInteger;
+      } else if (((AnnotationsReader.ConstantElementValue) val).val instanceof Boolean) {
+        return TypeReference.JavaLangBoolean;
+      } //Other types?
+    } else if (val instanceof AnnotationsReader.EnumElementValue) {
+        return TypeReference.JavaLangEnum;
+    } else if (val instanceof AnnotationsReader.ArrayElementValue) {
+      return getTRForElementValue(((AnnotationsReader.ArrayElementValue) val).vals[0]); //return TR of first element in array
+    }
+    return TypeReference.JavaLangClass; //Other types?
   }
 
   private IR makeIR(IMethod method, Context context) {
