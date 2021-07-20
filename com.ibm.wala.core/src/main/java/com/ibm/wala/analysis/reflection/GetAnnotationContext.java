@@ -64,7 +64,7 @@ public class GetAnnotationContext implements Context {
 
   @Override
   public String toString() {
-    return "JavaTypeContext<" + type + '>';
+    return "GetAnnotationContext<" + type + " : " + annotationType + '>';
   }
 
   @Override
