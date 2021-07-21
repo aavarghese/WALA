@@ -836,7 +836,17 @@ public class ReflectionTest extends WalaTestCase {
         Set<CGNode> nodes = cg.getNodes(mr);
         Assert.assertFalse(nodes.isEmpty());
 
+        tr = TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/lang/reflect/Field");
+        mr = MethodReference.findOrCreate(tr, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
+        nodes = cg.getNodes(mr);
+        Assert.assertFalse(nodes.isEmpty());
+
         tr = TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/lang/reflect/Method");
+        mr = MethodReference.findOrCreate(tr, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
+        nodes = cg.getNodes(mr);
+        Assert.assertFalse(nodes.isEmpty());
+
+        tr = TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/lang/reflect/Parameter");
         mr = MethodReference.findOrCreate(tr, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
         nodes = cg.getNodes(mr);
         Assert.assertFalse(nodes.isEmpty());
