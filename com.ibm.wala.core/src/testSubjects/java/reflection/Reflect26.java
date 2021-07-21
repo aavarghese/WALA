@@ -19,16 +19,16 @@ public class Reflect26 {
 
   // create a custom Annotation
   @Retention(RetentionPolicy.RUNTIME)
-  @interface Annotation {
+  @interface MarvelAnnotation {
       // This annotation has two attributes.
       public String key();
     
       public String value();
   }
 
-  @Annotation(key = "AvengersLeader", value = "CaptainAmerica")
+  @MarvelAnnotation(key = "AvengersLeader", value = "CaptainAmerica")
   public static class Marvel {
-    @Annotation(key = "AvengersPlayer", value = "Hulk")
+    @MarvelAnnotation(key = "AvengersPlayer", value = "Hulk")
     public void getCustomAnnotation()
     {
       System.out.println("MARVEL!");
@@ -39,12 +39,12 @@ public class Reflect26 {
   public static void main(String[] args)
       throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
     Class<?> c = Marvel.class;
-    Annotation annoC = c.getAnnotation(Annotation.class);
+    MarvelAnnotation annoC = c.getAnnotation(MarvelAnnotation.class);
     System.out.println("Key Attribute of Class Annotation: " + annoC.key());
     System.out.println("Value Attribute of Class Annotation: " + annoC.value());
     
     Method[] methods = c.getMethods();
-    Annotation anno = methods[0].getAnnotation(Annotation.class);
+    MarvelAnnotation anno = methods[0].getAnnotation(MarvelAnnotation.class);
     System.out.println("Key Attribute of Method Annotation: " + anno.key());
     System.out.println("Value Attribute of Method Annotation: " + anno.value());
 

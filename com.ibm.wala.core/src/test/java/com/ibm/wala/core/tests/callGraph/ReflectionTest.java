@@ -829,11 +829,16 @@ public class ReflectionTest extends WalaTestCase {
                 TestConstants.REFLECT26_MAIN);
         AnalysisOptions options = CallGraphTestUtil.makeAnalysisOptions(scope, entrypoints);
         CallGraph cg = CallGraphTestUtil.buildZeroOneCFA(options, new AnalysisCacheImpl(), cha, scope, true);
-//        TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/Reflect26$Marvel");
-//        MethodReference mr = MethodReference.findOrCreate(tr, "getCustomAnnotation", "()V");
+//      TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Application, "Lreflection/Reflect26$Marvel");
+//      MethodReference mr = MethodReference.findOrCreate(tr, "getCustomAnnotation", "()V");
         TypeReference tr = TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/lang/Class");
         MethodReference mr = MethodReference.findOrCreate(tr, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
         Set<CGNode> nodes = cg.getNodes(mr);
+        Assert.assertFalse(nodes.isEmpty());
+
+        tr = TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/lang/reflect/Method");
+        mr = MethodReference.findOrCreate(tr, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
+        nodes = cg.getNodes(mr);
         Assert.assertFalse(nodes.isEmpty());
     }
 
