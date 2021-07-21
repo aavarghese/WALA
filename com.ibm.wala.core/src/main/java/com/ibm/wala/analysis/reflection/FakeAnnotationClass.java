@@ -1,32 +1,21 @@
 package com.ibm.wala.analysis.reflection;
 
-import com.ibm.wala.classLoader.CallSiteReference;
 import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IClassLoader;
 import com.ibm.wala.classLoader.IField;
 import com.ibm.wala.classLoader.IMethod;
-import com.ibm.wala.classLoader.NewSiteReference;
 import com.ibm.wala.classLoader.SyntheticClass;
 import com.ibm.wala.core.util.strings.Atom;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
-import com.ibm.wala.ipa.summaries.LambdaSummaryClass;
 //import com.ibm.wala.ipa.summaries.LambdaSummaryClass.UnresolvedLambdaBodyException;
-import com.ibm.wala.ipa.summaries.MethodSummary;
-import com.ibm.wala.ipa.summaries.SummarizedMethod;
-import com.ibm.wala.shrike.shrikeBT.IInvokeInstruction.Dispatch;
-import com.ibm.wala.shrike.shrikeCT.InvalidClassFileException;
-import com.ibm.wala.ssa.SSAInstructionFactory;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.FieldReference;
-import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.types.Selector;
 import com.ibm.wala.types.TypeName;
 import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.types.annotations.Annotation;
 import com.ibm.wala.util.collections.HashMapFactory;
 import com.ibm.wala.util.collections.HashSetFactory;
-import com.ibm.wala.util.debug.Assertions;
-import com.ibm.wala.util.debug.UnimplementedError;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +30,7 @@ public class FakeAnnotationClass extends SyntheticClass {
 
   private Map<Atom, IField> fakeAnnotationFields = null;
 
-  private final Set<IMethod> methods = HashSetFactory.make();
+  private Map<Selector, IMethod> fakeAnnotationMethods = HashMapFactory.make();
 
   private IClass iinterface;
 
@@ -49,9 +38,6 @@ public class FakeAnnotationClass extends SyntheticClass {
     this(fakeAnnotationClass(clr), cha);
     this.iinterface = iinterface;
   }
-
-
-
 
   public FakeAnnotationClass(TypeReference typeRef, IClassHierarchy cha) {
     super(typeRef, cha);
@@ -63,7 +49,12 @@ public class FakeAnnotationClass extends SyntheticClass {
   }
 
   public void addMethod(IMethod m) {
-    methods.add(m);
+    if (fakeAnnotationMethods.containsKey(m.getSelector())) {
+      throw new IllegalStateException(
+          "FakeAnnotationClass already contains a Method called" + m.getName());
+    }
+    fakeAnnotationMethods.put(
+        m.getSelector(), m);
   }
 
   public void addField(final Atom name, final TypeReference fieldType) {
@@ -172,12 +163,11 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public IMethod getMethod(Selector selector) throws UnsupportedOperationException { //TODO -- caching of method!!!
-    for (IMethod m : methods) {
-      if (m.getSelector().equals(selector)) {
-        return m;
-      }
+    if (fakeAnnotationMethods != null) {
+      return fakeAnnotationMethods.get(selector);
+    } else {
+      return null;
     }
-    return null;
   }
 
   /*
@@ -205,7 +195,10 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public Collection<IMethod> getDeclaredMethods() throws UnsupportedOperationException {
-    return Collections.unmodifiableCollection(methods);
+    if (this.fakeAnnotationMethods != null) {
+      return Collections.unmodifiableCollection(fakeAnnotationMethods.values());
+    }
+    return Collections.emptySet();
   }
 
   /*
@@ -249,6 +242,7 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public Collection<IField> getAllInstanceFields() {
+
     return getDeclaredInstanceFields();
   }
 
@@ -257,6 +251,7 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public Collection<IField> getAllStaticFields() {
+
     return getDeclaredStaticFields();
   }
 
@@ -265,7 +260,7 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public Collection<IMethod> getAllMethods() {
-    throw new UnsupportedOperationException();
+    return getDeclaredMethods();
   }
 
   /*

@@ -19,14 +19,24 @@ import com.ibm.wala.classLoader.IClass;
 /** A {@link ContextSelector} to intercept calls to Object.getClass() */
 public class GetAnnotationContextSelector implements ContextSelector {
 
-  public static final MethodReference GET_ANNOTATION =
+  public static final MethodReference GET_ANNOTATION_CLASS =
       MethodReference.findOrCreate(TypeReference.JavaLangClass, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
 
   public static final MethodReference GET_ANNOTATION_APPLICATION =
       MethodReference.findOrCreate(TypeReference.JavaLangClassApplication, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
 
+  public static final MethodReference GET_ANNOTATION_CONSTRUCTOR =
+      MethodReference.findOrCreate(TypeReference.JavaLangReflectConstructor, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
 
-  //Ljava/lang/Class#getAnnotation(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;
+  public static final MethodReference GET_ANNOTATION_FIELD =
+      MethodReference.findOrCreate(TypeReference.JavaLangReflectField, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
+
+  public static final MethodReference GET_ANNOTATION_METHOD =
+      MethodReference.findOrCreate(TypeReference.JavaLangReflectMethod, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
+
+  public static final MethodReference GET_ANNOTATION_PARAMETER =
+      MethodReference.findOrCreate(TypeReference.JavaLangReflectParameter, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
+
 
   private final IClassHierarchy cha;
 
@@ -43,12 +53,49 @@ public class GetAnnotationContextSelector implements ContextSelector {
   public Context getCalleeTarget(
       CGNode caller, CallSiteReference site, IMethod callee, InstanceKey[] receiver) {
     IMethod meth = cha.resolveMethod(site.getDeclaredTarget());
-    if (meth != null && meth.getReference().equals(GET_ANNOTATION)) {
+    if (meth != null && (meth.getReference().equals(GET_ANNOTATION_CLASS)
+    )) {
       if (receiver[0] instanceof ConstantKey && receiver[1] instanceof ConstantKey) {
         IClass rec0 = ((ConstantKey<IClass>) receiver[0]).getValue();
         IClass rec1 = ((ConstantKey<IClass>) receiver[1]).getValue();
 
         return new GetAnnotationContext(new PointType(rec0), new PointType(rec1));
+      }
+    }
+    if (meth != null && (meth.getReference().equals(GET_ANNOTATION_CONSTRUCTOR) //TODO
+    )) {
+      if (receiver[0] instanceof ConstantKey && receiver[1] instanceof ConstantKey) {
+//        IClass rec0 = ((ConstantKey<IClass>) receiver[0]).getValue();
+//        IClass rec1 = ((ConstantKey<IClass>) receiver[1]).getValue();
+//
+//        return new GetAnnotationContext(new PointType(rec0), new PointType(rec1));
+      }
+    }
+    if (meth != null && (meth.getReference().equals(GET_ANNOTATION_FIELD) //TODO
+    )) {
+      if (receiver[0] instanceof ConstantKey && receiver[1] instanceof ConstantKey) {
+//        IClass rec0 = ((ConstantKey<IClass>) receiver[0]).getValue();
+//        IClass rec1 = ((ConstantKey<IClass>) receiver[1]).getValue();
+//
+//        return new GetAnnotationContext(new PointType(rec0), new PointType(rec1));
+      }
+    }
+    if (meth != null && ( meth.getReference().equals(GET_ANNOTATION_METHOD) //TODO
+    )) {
+      if (receiver[0] instanceof ConstantKey && receiver[1] instanceof ConstantKey) {
+//        IClass rec0 = ((ConstantKey<IClass>) receiver[0]).getValue();
+//        IClass rec1 = ((ConstantKey<IClass>) receiver[1]).getValue();
+//
+//        return new GetAnnotationContext(new PointType(rec0), new PointType(rec1));
+      }
+    }
+    if (meth != null && (meth.getReference().equals(GET_ANNOTATION_PARAMETER) //TODO 
+    )) {
+      if (receiver[0] instanceof ConstantKey && receiver[1] instanceof ConstantKey) {
+//        IClass rec0 = ((ConstantKey<IClass>) receiver[0]).getValue();
+//        IClass rec1 = ((ConstantKey<IClass>) receiver[1]).getValue();
+//
+//        return new GetAnnotationContext(new PointType(rec0), new PointType(rec1));
       }
     }
     return null;
@@ -59,7 +106,12 @@ public class GetAnnotationContextSelector implements ContextSelector {
   @Override
   public IntSet getRelevantParameters(CGNode caller, CallSiteReference site) {
     IMethod meth = cha.resolveMethod(site.getDeclaredTarget());
-    if (meth != null && meth.getReference().equals(GET_ANNOTATION)) {
+    if (meth != null && (meth.getReference().equals(GET_ANNOTATION_CLASS)
+        || meth.getReference().equals(GET_ANNOTATION_CONSTRUCTOR)
+        || meth.getReference().equals(GET_ANNOTATION_METHOD)
+        || meth.getReference().equals(GET_ANNOTATION_FIELD)
+        || meth.getReference().equals(GET_ANNOTATION_PARAMETER)
+    )) {
       return thisParameter;
     } else {
       return EmptyIntSet.instance;

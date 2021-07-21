@@ -30,6 +30,7 @@ import com.ibm.wala.shrike.shrikeCT.AnnotationsReader;
 import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.ArrayElementValue;
 import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.ConstantElementValue;
 import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.ElementValue;
+import com.ibm.wala.shrike.shrikeCT.AnnotationsReader.EnumElementValue;
 import com.ibm.wala.ssa.ConstantValue;
 import com.ibm.wala.ssa.DefUse;
 import com.ibm.wala.ssa.IR;
@@ -49,7 +50,6 @@ import com.ibm.wala.util.collections.EmptyIterator;
 import com.ibm.wala.util.collections.HashMapFactory;
 import com.ibm.wala.ipa.callgraph.propagation.FilteredPointerKey;
 import java.util.ArrayList;
-import com.ibm.wala.types.ClassLoaderReference;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -118,7 +118,11 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
     if (!(node.getContext().isA(GetAnnotationContext.class))) {
       return false;
     }
-    return node.getMethod().getReference().equals(GetAnnotationContextSelector.GET_ANNOTATION);
+    return node.getMethod().getReference().equals(GetAnnotationContextSelector.GET_ANNOTATION_CLASS) ||
+        node.getMethod().getReference().equals(GetAnnotationContextSelector.GET_ANNOTATION_CONSTRUCTOR) ||
+        node.getMethod().getReference().equals(GetAnnotationContextSelector.GET_ANNOTATION_FIELD) ||
+        node.getMethod().getReference().equals(GetAnnotationContextSelector.GET_ANNOTATION_METHOD) ||
+        node.getMethod().getReference().equals(GetAnnotationContextSelector.GET_ANNOTATION_PARAMETER);
   }
   @Override
   public Iterator<NewSiteReference> iterateNewSites(CGNode node) {
@@ -152,8 +156,6 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
             .getClassLoader()
             .getInstructionFactory();
 
-      TypeReference trAnnot = annot.getType();
-
       BypassSyntheticClassLoader loader = (BypassSyntheticClassLoader) cha.getLoader(cha.getScope().getLoader(Atom.findOrCreateUnicodeAtom("Synthetic")));
       FakeAnnotationClass clAnnot = annotationCache.get(klassParam);
       if (clAnnot == null) {
@@ -175,9 +177,13 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
       for (IField field: clAnnot.getAllFields()) {
         String value = annotMap.get(field.getName().toString()).toString();
         constants.put(nextLocal, new ConstantValue(value));
-        SSAPutInstruction P = insts.PutInstruction(iindex++, retValue, nextLocal++,field.getReference());
+        SSAPutInstruction P = insts.PutInstruction(iindex++, retValue, nextLocal++, field.getReference());
         statements.add(P);
       }
+
+//      for (IMethod method: clAnnot.getAllMethods()) {
+
+//      }
 
       SSAReturnInstruction R = insts.ReturnInstruction(statements.size(), retValue, false);
       statements.add(R);
@@ -186,21 +192,36 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
     return statements.toArray(new SSAInstruction[0]);
   }
 
-  private TypeReference getTRForElementValue(AnnotationsReader.ElementValue val) {
-    if (val instanceof AnnotationsReader.ConstantElementValue) {
-      if (((AnnotationsReader.ConstantElementValue) val).val instanceof String) {
+  private TypeReference getTRForElementValue(ElementValue val) {
+    if (val instanceof ConstantElementValue) {
+      if (((ConstantElementValue) val).val instanceof String) {
         return TypeReference.JavaLangString;
-      } else if (((AnnotationsReader.ConstantElementValue) val).val instanceof Integer) {
+      } else if (((ConstantElementValue) val).val instanceof Integer) {
         return TypeReference.JavaLangInteger;
-      } else if (((AnnotationsReader.ConstantElementValue) val).val instanceof Boolean) {
+      } else if (((ConstantElementValue) val).val instanceof Boolean) {
         return TypeReference.JavaLangBoolean;
-      } //Other types?
-    } else if (val instanceof AnnotationsReader.EnumElementValue) {
+      } else if (((ConstantElementValue) val).val instanceof Character) {
+        return TypeReference.JavaLangCharacter;
+      } else if (((ConstantElementValue) val).val instanceof Double) {
+        return TypeReference.JavaLangDouble;
+      } else if (((ConstantElementValue) val).val instanceof Float) {
+        return TypeReference.JavaLangFloat;
+      } else if (((ConstantElementValue) val).val instanceof Long) {
+        return TypeReference.JavaLangLong;
+      } else if (((ConstantElementValue) val).val instanceof Short) {
+        return TypeReference.JavaLangShort;
+      } else if (((ConstantElementValue) val).val instanceof Byte) {
+        return TypeReference.JavaLangByte;
+      } else if (((ConstantElementValue) val).val instanceof Class) {
+        return TypeReference.JavaLangClass;
+      }
+    } else if (val instanceof EnumElementValue) {
         return TypeReference.JavaLangEnum;
-    } else if (val instanceof AnnotationsReader.ArrayElementValue) {
-      return getTRForElementValue(((AnnotationsReader.ArrayElementValue) val).vals[0]); //return TR of first element in array
-    }
-    return TypeReference.JavaLangClass; //Other types?
+    } else if (val instanceof ArrayElementValue) {
+        TypeReference elemtr = getTRForElementValue(((ArrayElementValue) val).vals[0]); //return TR of first element in array
+        return elemtr.getArrayTypeForElementType(); //TODO: need to test
+      }
+    return TypeReference.JavaLangClass;
   }
 
   private IR makeIR(IMethod method, Context context) {
