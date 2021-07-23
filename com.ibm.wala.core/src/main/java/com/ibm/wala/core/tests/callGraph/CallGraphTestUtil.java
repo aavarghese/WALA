@@ -139,12 +139,12 @@ public class CallGraphTestUtil {
       S.start();
     }
 
-    SSAPropagationCallGraphBuilder builder =
+    CallGraphBuilder<InstanceKey> builder =
         Util.makeZeroOneCFABuilder(Language.JAVA, options, cache, cha, scope);
     CallGraph cg = builder.makeCallGraph(options, null);
     if (testPAtoString) {
       //builder.getPointerAnalysis().toString();
-      Util.dumpCG(builder.getCFAContextInterpreter(), builder.getPointerAnalysis(), cg);
+      Util.dumpCG(((SSAPropagationCallGraphBuilder) builder).getCFAContextInterpreter(), builder.getPointerAnalysis(), cg);
     }
 
     if (CHECK_FOOTPRINT) {
