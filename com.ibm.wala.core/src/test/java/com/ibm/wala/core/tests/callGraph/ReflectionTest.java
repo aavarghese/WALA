@@ -854,7 +854,7 @@ public class ReflectionTest extends WalaTestCase {
         tr = TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/lang/reflect/Field");
         mr = MethodReference.findOrCreate(tr, "getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;");
         nodes = cg.getNodes(mr);
-        //Assert.assertFalse(nodes.isEmpty());           //TODO: NOT WORKING!!!
+        Assert.assertFalse(nodes.isEmpty());
 
       //TODO need new asserts to confirm WALA handles annotations!!!
     }

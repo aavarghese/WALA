@@ -44,7 +44,7 @@ public class Reflect26 {
   public class Marvel {
 
     @MarvelAnnotation(role = "AvengersPlayer", name = "Thor")
-    String textField;
+    public String textField;
 
     @MarvelAnnotation(role = "AvengersPlayer", name = "IronMan", team = 5)
     public Marvel() {

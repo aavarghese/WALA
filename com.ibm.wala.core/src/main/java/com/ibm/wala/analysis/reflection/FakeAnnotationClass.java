@@ -203,7 +203,7 @@ public class FakeAnnotationClass extends SyntheticClass {
   @Override
   public Collection<IMethod> getDeclaredMethods() throws UnsupportedOperationException {
     if (this.fakeAnnotationMethods != null) {
-      return Collections.unmodifiableCollection(fakeAnnotationMethods.values());
+      return fakeAnnotationMethods.values();
     }
     return Collections.emptySet();
   }
@@ -214,7 +214,7 @@ public class FakeAnnotationClass extends SyntheticClass {
   @Override
   public Collection<IField> getDeclaredInstanceFields() throws UnsupportedOperationException {
     if ( fakeAnnotationFields != null) {
-      return  fakeAnnotationFields.values();
+      return fakeAnnotationFields.values();
     } else {
       return Collections.emptySet();
     }
@@ -249,7 +249,6 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public Collection<IField> getAllInstanceFields() {
-
     return getDeclaredInstanceFields();
   }
 
@@ -258,7 +257,6 @@ public class FakeAnnotationClass extends SyntheticClass {
    */
   @Override
   public Collection<IField> getAllStaticFields() {
-
     return getDeclaredStaticFields();
   }
 
