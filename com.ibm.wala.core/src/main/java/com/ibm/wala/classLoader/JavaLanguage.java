@@ -592,10 +592,8 @@ public class JavaLanguage extends LanguageImpl implements BytecodeLanguage, Cons
           ? TypeReference.JavaLangReflectConstructor
           : TypeReference.JavaLangReflectMethod;
     } else if (o instanceof IField) {
-      IField f = (IField) o;
       return TypeReference.JavaLangReflectField;
     } else if (o instanceof IParameter) {
-      IParameter p = (IParameter) o;
       return TypeReference.JavaLangReflectParameter;
     } else if (o instanceof MethodHandle || o instanceof ReferenceToken) {
       return TypeReference.JavaLangInvokeMethodHandle;

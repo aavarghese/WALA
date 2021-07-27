@@ -57,12 +57,10 @@ public class FakeAnnotationClass extends SyntheticClass {
   }
 
   public void addMethod(IMethod m) {
-    if (fakeAnnotationMethods.containsKey(m.getSelector())) {
-      throw new IllegalStateException(
-          "FakeAnnotationClass already contains a Method called" + m.getName());
-    }
     assert (this.fakeAnnotationMethods != null);
-    this.fakeAnnotationMethods.put(m.getSelector(), m);
+    if (!fakeAnnotationMethods.containsKey(m.getSelector())) {
+      this.fakeAnnotationMethods.put(m.getSelector(), m);
+    }
   }
 
   public void addField(final Atom name, final TypeReference fieldType) {

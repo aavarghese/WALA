@@ -10,15 +10,25 @@
  */
 package com.ibm.wala.analysis.reflection;
 
+import com.ibm.wala.cfg.InducedCFG;
 import com.ibm.wala.classLoader.IClass;
+import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.classLoader.SyntheticMethod;
+import com.ibm.wala.core.util.strings.Atom;
 import com.ibm.wala.ipa.callgraph.Context;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ipa.summaries.MethodSummary;
+import com.ibm.wala.ipa.summaries.SyntheticIR;
+import com.ibm.wala.ssa.ConstantValue;
 import com.ibm.wala.ssa.IR;
+import com.ibm.wala.ssa.SSAInstruction;
 import com.ibm.wala.ssa.SSAInstructionFactory;
 import com.ibm.wala.ssa.SSAOptions;
+import com.ibm.wala.ssa.SSAReturnInstruction;
+import com.ibm.wala.types.FieldReference;
 import com.ibm.wala.types.MethodReference;
+import java.util.Map;
+import com.ibm.wala.util.collections.HashMapFactory;
 
 /** A {@link SyntheticMethod} representing the semantics encoded in a {@link MethodSummary} */
 public class FakeAnnotationMethod extends SyntheticMethod {
@@ -31,32 +41,36 @@ public class FakeAnnotationMethod extends SyntheticMethod {
   private IClass iinterface;
 
   public FakeAnnotationMethod(MethodReference method, IClass declaringClass, final IClassHierarchy cha, IClass iinterface) throws NullPointerException {
-    super(method, declaringClass, true, false);
+    super(method, declaringClass, false, false);
     this.cha = cha;
     this.insts = declaringClass.getClassLoader().getInstructionFactory();
     this.iinterface = iinterface;
-
-    if (declaringClass instanceof FakeAnnotationClass) {
-      ((FakeAnnotationClass) declaringClass).addMethod(this);
-    }
   }
 
   public FakeAnnotationMethod(MethodReference method, final IClassHierarchy cha, IClass iinterface) {
     this(method, new FakeAnnotationClass(method.getDeclaringClass().getClassLoader(), cha, iinterface), cha, iinterface);
   }
 
+  public SSAInstruction[] makeStatements(Context context, Map<Integer, ConstantValue> constants) {
+    MethodSummary ms = new MethodSummary(this.getReference());
+    //SSAInstructionFactory insts = Language.JAVA.instructionFactory();
+    ms.addStatement(this.insts.PutInstruction(ms.getNumberOfStatements(), 2, 1, FieldReference.findOrCreate(this.getDeclaringClass().getReference(), this.getReference().getName(), this.getReference().getReturnType())));
+
+    SSAReturnInstruction R = insts.ReturnInstruction(ms.getNumberOfStatements(), 2, false);
+    ms.addStatement(R);
+    return ms.getStatements();
+  }
+
   @Override
   public IR makeIR(Context context, SSAOptions options) {
-    //Map<Integer, ConstantValue> constants = HashMapFactory.make();
-    //SSAInstruction instrs[] = getStatements(options);
-    // SSAInstruction instrs[] = makeStatements(context, constants);
-    // return new SyntheticIR(
-    //     method,
-    //     context,
-    //     new InducedCFG(instrs, method, context),
-    //     instrs,
-    //     SSAOptions.defaultOptions(),
-    //     constants);
-    return null;
+    Map<Integer, ConstantValue> constants = HashMapFactory.make();
+    SSAInstruction instrs[] = makeStatements(context, constants);
+     return new SyntheticIR(
+         this,
+         context,
+         new InducedCFG(instrs, this, context),
+         instrs,
+         SSAOptions.defaultOptions(),
+         constants);
   }
 }

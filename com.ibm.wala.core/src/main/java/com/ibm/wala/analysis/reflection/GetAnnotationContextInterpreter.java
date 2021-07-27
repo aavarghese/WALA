@@ -174,6 +174,7 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
       FakeAnnotationClass clAnnot = annotationCache.get(klassParam);
       if (clAnnot == null) {
         clAnnot = new FakeAnnotationClass(loader.getReference(), cha, klassParam);
+        annotationCache.put(klassParam, clAnnot);
       }
 
       loader.registerClass(TypeName.string2TypeName("Lcom/ibm/wala/FakeAnnotationClass") , clAnnot);
@@ -184,7 +185,6 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
         MethodReference mr = MethodReference.findOrCreate(clAnnot.getReference(), Atom.findOrCreateUnicodeAtom(key), Descriptor.findOrCreate(new TypeName[0], getTRForElementValue(annotMap.get(key)).getName()));
         FakeAnnotationMethod method = new FakeAnnotationMethod(mr, cha, klassParam);
         clAnnot.addMethod(method);
-        //clAnnot.addMethod(new Selector(Atom.findOrCreateUnicodeAtom(key), Descriptor.findOrCreate(new TypeName[0], getTRForElementValue(annotMap.get(key)).getName())), getTRForElementValue(annotMap.get(key)));
       }
 
       int iindex = 0;
@@ -193,17 +193,12 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
       statements.add(N);
 
       for (IField field: clAnnot.getAllFields()) {
-        String value = annotMap.get(field.getName().toString()).toString();
-        constants.put(nextLocal, new ConstantValue(value));
+        AnnotationsReader.ElementValue eValue = annotMap.get(field.getName().toString());
+        if (eValue != null) {
+          constants.put(nextLocal, new ConstantValue(eValue.toString()));
+        }
         SSAPutInstruction P = insts.PutInstruction(iindex++, retValue, nextLocal++, field.getReference());
         statements.add(P);
-      }
-
-      for (IMethod method: clAnnot.getAllMethods()) {
-        String value = annotMap.get(method.getName().toString()).toString();
-        constants.put(nextLocal, new ConstantValue(value));
-        //SSAPutInstruction P = insts.PutInstruction(iindex++, retValue, nextLocal++, method.getReference());
-        //statements.add(P);
       }
 
       SSAReturnInstruction R = insts.ReturnInstruction(statements.size(), retValue, false);

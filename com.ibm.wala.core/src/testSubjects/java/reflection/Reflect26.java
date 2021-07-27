@@ -35,9 +35,9 @@ public class Reflect26 {
         LOW, MEDIUM, HIGH
       }
 
-      Priority priority() default Priority.MEDIUM;
+      public Priority priority() default Priority.MEDIUM;
 
-      String[] tags() default "";
+      public String[] tags() default {""};
   }
 
   @MarvelAnnotation(role = "AvengersLeader", name = "CaptainAmerica", tags = {"A", "B"})
