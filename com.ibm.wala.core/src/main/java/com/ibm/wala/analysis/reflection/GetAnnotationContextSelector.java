@@ -19,6 +19,7 @@ import com.ibm.wala.classLoader.IParameter;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.Context;
 import com.ibm.wala.ipa.callgraph.ContextSelector;
+import com.ibm.wala.ipa.callgraph.propagation.ConcreteTypeKey;
 import com.ibm.wala.ipa.callgraph.propagation.ConstantKey;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
@@ -67,8 +68,6 @@ public class GetAnnotationContextSelector implements ContextSelector {
     IMethod meth = cha.resolveMethod(site.getDeclaredTarget());
     IClass rec1 = null;
 
-    //IClass aClass = meth.getDeclaringClass();
-
     if (meth != null && (meth.getReference().equals(GET_ANNOTATION_CLASS))) {
       if (receiver[0] instanceof ConstantKey<?> && receiver[1] instanceof ConstantKey<?>) {
         IClass rec0 = (IClass) ((ConstantKey<?>) receiver[0]).getValue();
@@ -92,7 +91,7 @@ public class GetAnnotationContextSelector implements ContextSelector {
       }
     } else if (meth != null && (meth.getReference().equals(GET_ANNOTATION_FIELD))) {
       if (receiver[0] instanceof ConstantKey && receiver[1] instanceof ConstantKey) {
-        IField fld = (IField) ((ConstantKey<?>) receiver[0]).getValue();
+        IField fld =  (IField) ((ConstantKey<?>) receiver[0]).getValue();
         rec1 = (IClass) ((ConstantKey<?>) receiver[1]).getValue();
 
         return new GetAnnotationContext(fld, new PointType(rec1));
