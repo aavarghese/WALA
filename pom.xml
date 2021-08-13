@@ -3,12 +3,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
     xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.ibm.wala</groupId>
+  <groupId>WALA</groupId>
   <artifactId>WALA</artifactId>
-  <version>1.5.8-SNAPSHOT</version>
+  <version>1.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
-    <project-version>1.5.8-SNAPSHOT</project-version>
+    <project-version>1.6.0-SNAPSHOT</project-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <build-alias>b000</build-alias>
     <tycho-version>0.23.1</tycho-version>

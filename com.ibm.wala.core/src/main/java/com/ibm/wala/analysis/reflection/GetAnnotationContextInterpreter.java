@@ -162,9 +162,11 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
     }
 
     Annotation annot = null;
-    for (Annotation k: annots) {
-      if (k.getType().equals(trParam)) {
-        annot = k;
+    if (annots != null) {
+      for (Annotation k: annots) {
+        if (k.getType().equals(trParam)) {
+          annot = k;
+        }
       }
     }
     if (annot != null) {
