@@ -353,8 +353,7 @@ public class ArrayClass implements IClass, Constants {
    */
   @Override
   public Collection<IField> getAllFields() {
-    Assertions.UNREACHABLE();
-    return null;
+    return Collections.emptySet();
   }
 
   @Override
