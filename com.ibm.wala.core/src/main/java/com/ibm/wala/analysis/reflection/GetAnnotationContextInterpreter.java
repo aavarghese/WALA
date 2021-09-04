@@ -171,16 +171,18 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
 
       loader.registerClass(TypeName.string2TypeName("Lcom/ibm/wala/FakeAnnotationClass"), clAnnot);
 
-      Map<String, AnnotationsReader.ElementValue> annotMap = annot.getNamedArguments();
-      for (String key : annotMap.keySet()) {
-        clAnnot.addField(
-            Atom.findOrCreateUnicodeAtom(key), getTRForElementValue(annotMap.get(key)));
+
+      Collection<? extends IMethod> declaredMethods = klassParam.getDeclaredMethods();
+      for (IMethod meth: declaredMethods) {
+        Atom name = meth.getName();
+        TypeReference type = meth.getReturnType();
+        clAnnot.addField(name, type);
         MethodReference mr =
             MethodReference.findOrCreate(
                 clAnnot.getReference(),
-                Atom.findOrCreateUnicodeAtom(key),
+                name,
                 Descriptor.findOrCreate(
-                    new TypeName[0], getTRForElementValue(annotMap.get(key)).getName()));
+                    new TypeName[0], type.getName()));
         FakeAnnotationMethod method = new FakeAnnotationMethod(mr, cha, klassParam);
         clAnnot.addMethod(method);
       }
@@ -190,6 +192,7 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
       SSANewInstruction N = insts.NewInstruction(iindex++, retValue, site);
       statements.add(N);
 
+      Map<String, AnnotationsReader.ElementValue> annotMap = annot.getNamedArguments();
       for (IField field : clAnnot.getAllFields()) {
         AnnotationsReader.ElementValue eValue = annotMap.get(field.getName().toString());
         if (eValue != null) {

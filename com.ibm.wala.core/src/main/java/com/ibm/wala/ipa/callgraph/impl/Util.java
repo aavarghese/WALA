@@ -736,7 +736,7 @@ public class Util {
       System.out.println("dir = " + currentDir);
       BufferedWriter out =
           new BufferedWriter(
-              new FileWriter(String.join(File.pathSeparator, currentDir, "dumpCG.txt")));
+              new FileWriter(String.join(File.separator, currentDir, "dumpCG.txt")));
       for (CGNode N : CG) {
         out.write("callees of node " + getShortName(N) + " : [");
         boolean fst = true;
