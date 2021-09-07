@@ -72,6 +72,12 @@ public abstract class JVMClass<T extends IClassLoader> extends BytecodeClass<T> 
     return result;
   }
 
+  @Override
+  public boolean isEnum() {
+    boolean result = ((modifiers & Constants.ACC_ENUM) != 0);
+    return result;
+  }
+
   /** @see com.ibm.wala.classLoader.IClass#getClassInitializer() */
   @Override
   public IMethod getClassInitializer() {

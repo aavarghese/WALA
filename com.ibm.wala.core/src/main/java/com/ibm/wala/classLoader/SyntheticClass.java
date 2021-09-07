@@ -92,6 +92,11 @@ public abstract class SyntheticClass implements IClass {
     return false;
   }
 
+  @Override
+  public boolean isEnum() {
+    return false;
+  }
+
   /*
    * @see com.ibm.wala.classLoader.IClass#getReference()
    */

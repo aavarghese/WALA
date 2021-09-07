@@ -91,6 +91,11 @@ public class ArrayClass implements IClass, Constants {
     return false;
   }
 
+  @Override
+  public boolean isEnum() {
+    return false;
+  }
+
   /*
    * @see com.ibm.wala.classLoader.IClass#isAbstract()
    */
@@ -98,6 +103,7 @@ public class ArrayClass implements IClass, Constants {
   public boolean isAbstract() {
     return false;
   }
+
 
   /*
    * @see com.ibm.wala.classLoader.IClass#getModifiers()

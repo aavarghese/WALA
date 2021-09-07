@@ -47,12 +47,6 @@
 
 package com.ibm.wala.dalvik.classLoader;
 
-import static org.jf.dexlib2.AccessFlags.ABSTRACT;
-import static org.jf.dexlib2.AccessFlags.INTERFACE;
-import static org.jf.dexlib2.AccessFlags.PRIVATE;
-import static org.jf.dexlib2.AccessFlags.PUBLIC;
-import static org.jf.dexlib2.AccessFlags.SYNTHETIC;
-
 import com.ibm.wala.classLoader.BytecodeClass;
 import com.ibm.wala.classLoader.IClassLoader;
 import com.ibm.wala.classLoader.IField;
@@ -74,6 +68,8 @@ import org.jf.dexlib2.iface.ClassDef;
 import org.jf.dexlib2.iface.Field;
 import org.jf.dexlib2.iface.Method;
 import org.jf.dexlib2.iface.MethodParameter;
+
+import static org.jf.dexlib2.AccessFlags.*;
 
 public class DexIClass extends BytecodeClass<IClassLoader> {
 
@@ -222,6 +218,11 @@ public class DexIClass extends BytecodeClass<IClassLoader> {
   @Override
   public boolean isSynthetic() {
     return (modifiers & SYNTHETIC.getValue()) != 0;
+  }
+
+  @Override
+  public boolean isEnum() {
+    return (modifiers & ENUM.getValue()) != 0;
   }
 
   /*

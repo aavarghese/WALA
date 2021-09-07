@@ -103,6 +103,11 @@ public abstract class AstFunctionClass implements IClass, ClassConstants {
   }
 
   @Override
+  public boolean isEnum() {
+    return false;
+  }
+
+  @Override
   public int getModifiers() {
     return ACC_PUBLIC;
   }

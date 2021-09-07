@@ -49,6 +49,9 @@ public interface IClass extends IClassHierarchyDweller {
   /** @return true iff this class is synthetic, i.e., compiler-generated */
   boolean isSynthetic();
 
+  /** @return true iff this class is enum */
+  boolean isEnum();
+
   /**
    * Return the integer that encodes the class's modifiers, as defined by the JVM specification
    *

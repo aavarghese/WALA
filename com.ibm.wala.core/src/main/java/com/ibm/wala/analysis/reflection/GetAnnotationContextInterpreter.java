@@ -33,6 +33,8 @@ import com.ibm.wala.types.*;
 import com.ibm.wala.types.annotations.Annotation;
 import com.ibm.wala.util.collections.EmptyIterator;
 import com.ibm.wala.util.collections.HashMapFactory;
+import com.ibm.wala.util.collections.Pair;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -173,6 +175,7 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
 
 
       Collection<? extends IMethod> declaredMethods = klassParam.getDeclaredMethods();
+
       for (IMethod meth: declaredMethods) {
         Atom name = meth.getName();
         TypeReference type = meth.getReturnType();
@@ -195,12 +198,19 @@ public class GetAnnotationContextInterpreter implements SSAContextInterpreter {
       Map<String, AnnotationsReader.ElementValue> annotMap = annot.getNamedArguments();
       for (IField field : clAnnot.getAllFields()) {
         AnnotationsReader.ElementValue eValue = annotMap.get(field.getName().toString());
+
         if (eValue != null) {
           constants.put(nextLocal, new ConstantValue(eValue.toString()));
+          SSAPutInstruction P =
+                  insts.PutInstruction(iindex++, retValue, nextLocal++, field.getReference());
+          statements.add(P);
+        } else {
+          IClass fieldClass = cha.lookupClass(field.getFieldTypeReference());
+          if (fieldClass != null && fieldClass.isEnum()) {
+            int i = 0;
+          }
         }
-        SSAPutInstruction P =
-            insts.PutInstruction(iindex++, retValue, nextLocal++, field.getReference());
-        statements.add(P);
+
       }
 
       SSAReturnInstruction R = insts.ReturnInstruction(statements.size(), retValue, false);
