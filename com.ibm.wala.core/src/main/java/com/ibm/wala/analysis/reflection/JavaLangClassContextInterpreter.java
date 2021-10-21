@@ -322,15 +322,16 @@ public class JavaLangClassContextInterpreter implements SSAContextInterpreter {
     return mRef.equals(GET_CONSTRUCTOR)
         || mRef.equals(GET_CONSTRUCTORS)
         || mRef.equals(GET_METHOD)
-        || mRef.equals(GET_METHODS)
+        //|| mRef.equals(GET_METHODS)
         || mRef.equals(GET_FIELD)
         || mRef.equals(GET_FIELDS)
         || mRef.equals(GET_DECLARED_CONSTRUCTOR)
         || mRef.equals(GET_DECLARED_CONSTRUCTORS)
         || mRef.equals(GET_DECLARED_METHOD)
-        || mRef.equals(GET_DECLARED_METHODS)
+        //|| mRef.equals(GET_DECLARED_METHODS)
         || mRef.equals(GET_DECLARED_FIELD)
-        || mRef.equals(GET_DECLARED_FIELDS);
+        || mRef.equals(GET_DECLARED_FIELDS)
+        ;
   }
 
   @Override
